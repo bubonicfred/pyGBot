@@ -52,7 +52,7 @@
 1: What don't you want to find in your Chinese food?
 1: What will I bring back in time to convince people that I am a powerful wizard?
 1: How am I maintaining my relationship status?
-1: ____. It's a trap!
+1: It's a trap!
 1: Coming to Broadway this season, ____: The Musical.
 2: Rumor has it that Vladimir Putin's favorite dish is ____ stuffed with ____.
 1: But before I kill you, Mr. Bond, I must show you ____.
@@ -156,7 +156,8 @@
 1: Tonight on 20/20: What you don't know about ____ could kill you.
 2: You haven't truly lived until you've experienced ____ and ____ at the same time.
 1: What should I name my rock band?
-
+1: ____! Abandon ship!
+1: Do not pass ____, go directly to jail.
 
 
 
@@ -164,6 +165,9 @@
 Michelle Obama's arms
 White people
 An erection that lasts longer than four hours
+The Redskins' Orginal Americans Foundation
+Shark Week
+Did you try turning it off and on?
 Panda sex
 Stifling a giggle at the mention of Hutus and Tutsis
 A middle-aged man on roller skates
@@ -192,7 +196,6 @@ Shapeshifters
 The Care Bear Stare
 Erectile dysfunction
 The chronic
-"Tweeting."
 Firing a rifle into the air while balls deep in a squealing hog
 Nicolas Cage
 Home video of Oprah sobbing into a Lean Cuisine
@@ -213,18 +216,14 @@ Revenge fucking
 Ripping into a man's chest and pulling out his still-beating heart
 Ryan Gosling riding in on a white horse
 Santa Claus
-Scrotum tickling
 Sexual humiliation
-Sexy Siamese twins
 Slow motion
 Space muffins
 Statistically validated stereotypes
-Sudden Poop Explosion Disease
 The boners of the elderly
 The economy
 Dropping a chandelier on your enemies and riding the rope up
 Public ridicule
-A snapping turtle biting the tip of your penis
 Vehicular manslaughter
 Domino's Oreo Dessert Pizza
 The token minority
@@ -238,6 +237,7 @@ The Little Engine That Could
 Lady Gaga
 A death ray
 Vigilante justice
+Not what I expected
 Exactly what you'd expect
 Natural male enhancement
 Passive-aggressive Post-it notes
@@ -247,7 +247,6 @@ Actually taking candy from a baby
 Jibber-jabber
 Crystal meth
 My inner demons
-Pac-Man uncontrollably guzzling cum
 My vagina
 The Donald Trump Seal of Approval
 The true meaning of Christmas
@@ -316,17 +315,12 @@ Grandpa's ashes
 Basic human decency
 A Burmese tiger pit
 Death by Steven Seagal
-Mr. Dressup
 Being Canadian
-The Famous Five
-Stephen Harper
 The Royal Canadian Mounted Police
 An icy handjob from an Edmonton hooker
 Poutine
 Newfies
-The Official Languages Act. La Loi sur les langues officielles
 Terry Fox's prosthetic leg
-The FLQ
 Canada: America's Hat
 Don Cherry's wardrobe
 Burning down the White House
@@ -370,7 +364,7 @@ A magic hippie love cloud
 Fuck Mountain
 Survivor's guilt
 Me
-Getting gang-banged by the Blue Man Group
+The Blue Man Group
 Jeff Goldblum
 Making a friend
 German dungeon porn
@@ -412,12 +406,11 @@ Hunting accidents
 A cartoon camel enjoying the smooth, refreshing taste of a cigarette
 Abstinence
 Mountain Dew Code Red
-Tweeting
+"Tweeting"
 Making sex at her
 Stunt doubles
 Flavored condoms
 Heath Ledger
-Muzzy
 Sunshine and rainbows
 Flash flooding
 Goblins
@@ -454,7 +447,6 @@ Former President George W. Bush
 Geese
 Mutually-assured destruction
 Bling
-Smegma
 The South
 Pretending to care
 Arnold Schwarzenegger
@@ -550,7 +542,6 @@ Sweet, sweet vengeance
 Keg stands
 Darth Vader
 Necrophilia
-Toni Morrison's vagina
 Preteens
 A cooler full of organs
 Keanu Reeves
@@ -616,16 +607,13 @@ Sean Connery
 The milk man
 The Chinese gymnastics team
 Eating the last known bison
-Soiling oneself
 Giving 110%
 Friendly fire
 Count Chocula
-Feeding Rosie O'Donnell
 Seduction
 Being a motherfucking sorcerer
 Eastern European Turbo-Folk music
 Douchebags on their iPhones
-The deformed
 Donald Trump
 This answer is postmodern
 African children
@@ -660,7 +648,6 @@ The Ubermensch
 Nazis
 Repression
 Attitude
-Passable transvestites
 Puberty
 Swooping
 Adderall
@@ -681,16 +668,13 @@ Not giving a shit about the Third World
 My relationship status
 Barack Obama
 Mouth herpes
-Wiping her butt
 Pedophiles
-Doin' it in the butt
 Being fabulous
 An M. Night Shyamalan plot twist
 A bag of magic beans
 Dead parents
 My sex life
 Riding off into the sunset
-Dick fingers
 The Virginia Tech Massacre
 Queefing
 Tangled Slinkys
@@ -751,11 +735,8 @@ Police brutality
 Forgetting the Alamo
 Booby-trapping the house to foil burglars
 Estrogen
-A robust mongoloid
 Her Royal Highness, Queen Elizabeth II
-Pooping back and forth. Forever
 Cockfights
-Bitches
 Stephen Hawking talking dirty
 Those times when you get sand in your vagina
 Faith healing
@@ -763,7 +744,6 @@ Impotence
 Bananas in Pajamas
 Getting so angry that you pop a boner
 Tasteful sideboob
-Two midgets shitting into a bucket
 Racially-biased SAT questions
 The forbidden fruit
 Anal beads
@@ -823,7 +803,6 @@ Wifely duties
 Hot people
 Kanye West
 The Amish
-When you fart and a little bit comes out
 Bosnian chicken farmers
 Nubile slave boys
 Carnies
@@ -870,10 +849,9 @@ Magma
 Software piracy
 Five bucks
 Bros
-Lucy Lawless
 Popular culture
 Potatoes
 Bardolatry
-Internet Relay Chat
+IRC
 Dexterity
 Tradition
