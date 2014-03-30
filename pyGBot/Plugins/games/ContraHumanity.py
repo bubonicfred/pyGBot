@@ -23,12 +23,72 @@
 
 import string
 import random
+import re
+import os
+from urllib import urlopen
 from time import time
 from pyGBot.BasePlugin import BasePlugin
 
 
 def enum(**enums):
     return type('Enum', (), enums)
+
+
+def get_wiki_featured_article_titles(n=7):
+    feat_feed_uri = (
+        "http://en.wikipedia.org/w/api.php?"
+        "action=featuredfeed&feed=featured&feedformat=atom")
+
+    feat_title_re = re.compile(
+        ".+title=&quot;(.+?)&quot;"
+        "&gt;(&lt;b&gt;)?"
+        "Full(&amp;#160;)? ?article.+")
+
+    entry_start_re = re.compile(
+        "\s*<entry.+")
+
+    entry_end_re = re.compile(
+        "\s*</entry>")
+
+    summary_start_re = re.compile(
+        "\s*<summary.+")
+
+    summary_end_re = re.compile(
+        "\s*</summary>")
+
+    scanning = True
+    in_entry = False
+    in_summary = False
+    feed = urlopen(feat_feed_uri)
+    titles = []
+    for line in feed.readlines():
+        if not scanning:
+            if re.match(entry_end_re, line):
+                in_entry = False
+                scanning = True
+            continue
+        if not in_entry:
+            if re.match(entry_start_re, line):
+                in_entry = True
+            continue
+        if not in_summary:
+            if re.match(summary_start_re, line):
+                in_summary = True
+            continue
+        title_match = re.match(feat_title_re, line)
+        if title_match:
+            title = title_match.groups()[0]
+            if title not in titles:
+                titles.append(title)
+                scanning = False
+        if re.match(summary_end_re, line):
+            in_summary = False
+        if re.match(entry_end_re, line):
+            in_entry = False
+        if len(titles) == n:
+            break
+    feed.close()
+    return titles
 
 
 class ContraHumanity(BasePlugin):
@@ -49,6 +109,9 @@ class ContraHumanity(BasePlugin):
             ["Each player's name will be added as a white card.", True],
             "rando":
             ["Adds an AI player that randomly picks cards.", True],
+            "wikifeature":
+            ["The titles of the past week's "
+             "featured articles on Wikipedia are white cards.", True]
         }
 
         # Initialize game
@@ -131,15 +194,37 @@ class ContraHumanity(BasePlugin):
 
     def loadcards(self):
         # Empty decks
-        self.baseblackdeck = []
-        self.basewhitedeck = []
+        self.baseblackdeck = set()
+        self.basewhitedeck = set()
 
         # Load CaH cards
         with open('./pyGBot/Plugins/games/ContraHumanityCards.txt', 'r') as f:
             self.parsecardfile(f)
 
-        with open('./pyGBot/Plugins/games/ContraHumanityCustom.txt', 'r') as f:
+        olddir = os.path.abspath(os.curdir)
+        try:
+            os.chdir('./pyGBot/Plugins/games/ContraHumanityCustom')
+        except OSError:
+            return
+        for fn in os.listdir(os.curdir):
+            try:
+                f = open(fn, 'r')
+            except (IOError, OSError):
+                continue
             self.parsecardfile(f)
+            f.close()
+        os.chdir(olddir)
+
+        # Cards in the cardlists not to add to the deck.
+        self.blacklist = set()
+        try:
+            blaf = open('./pyGBot/Plugins/games/ContraHumanityBlacklist.txt',
+                        'r')
+            self.blacklist_cards(*blaf.readlines())
+            blaf.close()
+        except (OSError, IOError) as ex:
+            print("Error while loading blacklist")
+            print(ex)
 
     def parsecardfile(self, f):
         for line in f:
@@ -150,11 +235,11 @@ class ContraHumanity(BasePlugin):
                 # Do we have a play definition?
                 if line[1] == ":":
                     # This is a black card.
-                    self.baseblackdeck.append(
-                        [line[3:].rstrip("\n"), int(line[0])])
+                    self.baseblackdeck.add(
+                        (line[3:].rstrip("\n"), int(line[0])))
                 else:
                     # This is a white card.
-                    self.basewhitedeck.append(line.rstrip("\n"))
+                    self.basewhitedeck.add(line.rstrip("\n"))
 
     def resetdata(self):
         # Initialize all game variables to new game values
@@ -176,10 +261,22 @@ class ContraHumanity(BasePlugin):
         self.gamestate = self.GameState.none
 
         # Load deck instances and shuffle
-        self.blackdeck = list(self.baseblackdeck)
+        self.blackdeck = list(self.baseblackdeck - self.blacklist)
         random.shuffle(self.blackdeck)
-        self.whitedeck = list(self.basewhitedeck)
+        self.whitedeck = list(self.basewhitedeck - self.blacklist)
+        if self.variants["wikifeature"][1]:
+            self.whitedeck.extend(get_wiki_featured_article_titles())
         random.shuffle(self.whitedeck)
+        cardlog = open('card.log', 'w')
+        cardlog.write("Black cards:\n")
+        for card in self.blackdeck:
+            cardlog.write(card[0])
+            cardlog.write("\n")
+        cardlog.write("White cards:\n")
+        for card in self.whitedeck:
+            cardlog.write(card)
+            cardlog.write("\n")
+        cardlog.close()
 
     def startgame(self):
         # Put the game into InProgress mode
@@ -310,7 +407,7 @@ class ContraHumanity(BasePlugin):
                 "All cards have been played. Judgment is imminent. "
                 "!gamble now, or forever hold your peace.")
             if not self.judging:
-                self.judgestarttime = time() + 10
+                self.judgestarttime = time() + 20
 
     def beginjudging(self):
         # Begin the judging process
@@ -343,14 +440,11 @@ class ContraHumanity(BasePlugin):
                             " / ".join(self.playedcards[i][1:][0])))
             else:
                 black_card_fmtstr = self.blackcard[0].replace(
-                    "____", "{}")
+                    "____", "\x0304{}\x0F")
                 for i in xrange(0, len(self.playedcards)):
-                    print("{}.format(*{})".format(
-                        black_card_fmtstr,
-                        self.playedcards[i][1:][0]))
                     self.bot.pubout(
                         self.channel,
-                        "{}. \x0304{}\x0F".format(
+                        "{}. {}".format(
                             i+1,
                             black_card_fmtstr.format(
                                 *self.playedcards[i][1:][0])))
@@ -541,17 +635,16 @@ class ContraHumanity(BasePlugin):
                             self.live_players[self.judgeindex]))
                     judge = self.live_players[self.judgeindex]
 
-                    # Remove the new judge's played cards
-                    for i in range(0, len(self.playedcards)):
-                        # IndexError comes up if we delete anything
-                        # but the last card; using try/catch for
-                        # future expansion (with gambling, may require
-                        # deletion of multiple cards)
-                        try:
-                            if self.playedcards[i][0] == judge:
-                                self.playedcards.remove(self.playedcards[i])
-                        except IndexError:
-                            pass
+                    # The new judge played these cards
+                    judge_cards = [card for card in self.playedcards
+                                   if card[0] == judge]
+                    # Remove them
+                    for card in judge_cards:
+                        self.playedcards.remove(card)
+                    # If there is more than one, it means the judge
+                    # gambled. Give their points back.
+                    if len(judge_cards) > 1:
+                        self.woncards[judge] += len(judge_cards) - 1
 
                     # Restart judging
                     self.checkroundover()
@@ -1111,6 +1204,96 @@ class ContraHumanity(BasePlugin):
             self.reply(channel, user, "Successfully reloaded base decks.")
         else:
             self.reply(channel, user, "You do not have permission to do that.")
+
+    def cmd_clearblacklist(self, args, channel, user):
+        userlevel = self.auth.get_userlevel(user)
+        if userlevel < 100:
+            self.reply(
+                channel,
+                user,
+                "You must be at least a botmod to alter the blacklist.")
+            return
+        self.blacklist = set()
+        self.reply(
+            channel,
+            user,
+            "Blacklist is now empty.")
+
+    def blacklist_cards(self, *args):
+        added = []
+        removed = []
+        unmatched = []
+        for arg in args:
+            if arg in self.blacklist:
+                print("Removing")
+                print(arg)
+                self.blacklist.remove(arg)
+                removed.append(arg)
+            else:
+                print("Adding")
+                print(arg)
+                self.blacklist.add(arg)
+                added.append(arg)
+        return (added, removed, unmatched)
+
+    def cmd_blacklist(self, _args, channel, user):
+        userlevel = self.auth.get_userlevel(user)
+        if len(_args) == 0:
+            self.reply(
+                channel,
+                user,
+                "Current blacklist:")
+            for ex in self.blacklist:
+                self.reply(
+                    channel,
+                    user,
+                    ex)
+            return
+        if userlevel < 100:
+            self.reply(
+                channel,
+                user,
+                "You must be at least a botmod to alter the blacklist."
+                "(your level: {} needed level: 100)".format(userlevel))
+            return
+        if self.gamestate == self.GameState.inprogress:
+            self.reply(
+                channel,
+                user,
+                "You can't alter the blacklist during a game.")
+            return
+        # Expressions are surrounded with curly braces to make it easy
+        # to include spaces, punctuation, etc. Group them accordingly
+        args = []
+        cur_arg = []
+        in_arg = False
+        for arg in _args:
+            if arg[0] == "{" and arg[-1] == "}":
+                args.append(arg[1:-1])
+            elif arg[0] == "{":
+                in_arg = True
+                cur_arg.append(arg[1:])
+            elif arg[-1] == "}":
+                in_arg = False
+                cur_arg.append(arg[:-1])
+                args.append(" ".join(cur_arg))
+            elif in_arg:
+                cur_arg.append(arg)
+        (added, removed, unmatched) = self.blacklist_cards(*args)
+        if added:
+            self.reply(
+                channel,
+                user,
+                "Freshly blacklisted cards: {}".format(*added))
+        if removed:
+            self.reply(
+                channel,
+                user,
+                "Removed cards from blacklist: {}".format(*removed))
+        # Write new blacklist to disk
+        with open('./pyGBot/Plugins/games/ContraHumanityBlacklist.txt', 'w') as blf:
+            for blc in self.blacklist:
+                blf.write(blc + "\n")
 
     def do_command(self, channel, user, cmd):
         # Handle commands
